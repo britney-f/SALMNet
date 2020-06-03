@@ -32,6 +32,6 @@ Run by `python eval.py`<br>
 
 Relevant Links
 -----
-[Deformable convolution implementation](https://github.com/1zb/deformable-convolution-pytorch)
-[Synchronized-BatchNorm-PyTorch](https://github.com/vacancy/Synchronized-BatchNorm-PyTorch)
+[Deformable convolution implementation](https://github.com/1zb/deformable-convolution-pytorch)<br>
+[Synchronized-BatchNorm-PyTorch](https://github.com/vacancy/Synchronized-BatchNorm-PyTorch)<br>
 
