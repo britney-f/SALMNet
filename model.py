@@ -1,20 +1,22 @@
+import functools
 import random
 import torch
 import torch.nn as nn
+from torchvision import models
 import torch.nn.functional as F
 from dcp.modules import ConvOffset2d
 
 from resnet import resnet101
 from sync_batchnorm import SynchronizedBatchNorm2d
-from config import res101_csail_path, res101_path
+from config import res101_path, res101_csail_path
 
 norm_layer = SynchronizedBatchNorm2d
 relu = nn.ReLU(inplace=True)
 
 
-class SGCA(nn.Module):
+class Module1(nn.Module):
     def __init__(self, down_dim, lateral_dim):
-        super(SGCA, self).__init__()
+        super(Module1, self).__init__()
         self.down_dim = down_dim
         self.lateral_dim = lateral_dim
         self.threshold = int(self.down_dim * 0.5)
@@ -62,9 +64,9 @@ class DFConv(nn.Module):
         return conv_offset
 
 
-class PDC(nn.Module):
+class Module2(nn.Module):
     def __init__(self, in_dim, out_dim, setting):
-        super(PDC, self).__init__()
+        super(Module2, self).__init__()
         self.in_dim = in_dim
         self.out_dim = out_dim
         self.setting = setting
@@ -143,14 +145,14 @@ class Baseline(nn.Module):
         self.layer3 = resnet.layer3
         self.layer4 = resnet.layer4
 
-        self.sgca_3 = SGCA(2048, 1024)
-        self.sgca_2 = SGCA(1024, 512)
-        self.sgca_1 = SGCA(512, 256)
+        self.m1_3 = Module1(2048, 1024)
+        self.m1_2 = Module1(1024, 512)
+        self.m1_1 = Module1(512, 256)
 
-        self.pdc_4 = PDC(2048, 128, (5, 7, 9))
-        self.pdc_3 = PDC(1024, 128, (10, 14, 18))
-        self.pdc_2 = PDC(512, 128, (20, 28, 36))
-        self.pdc_1 = PDC(256, 128, (40, 56, 72))
+        self.m2_4 = Module2(2048, 128, (5, 7, 9))
+        self.m2_3 = Module2(1024, 128, (10, 14, 18))
+        self.m2_2 = Module2(512, 128, (20, 28, 36))
+        self.m2_1 = Module2(256, 128, (40, 56, 72))
 
         self.decoder4 = DecoderBlock(128, 128)
         self.decoder3 = DecoderBlock(128, 128)
@@ -177,14 +179,14 @@ class Baseline(nn.Module):
         layer3 = self.layer3(layer2)
         layer4 = self.layer4(layer3)
 
-        m1_3 = self.sgca_3(layer4, layer3)
-        m1_2 = self.sgca_2(m1_3, layer2)
-        m1_1 = self.sgca_1(m1_2, layer1)
+        m1_3 = self.m1_3(layer4, layer3)
+        m1_2 = self.m1_2(m1_3, layer2)
+        m1_1 = self.m1_1(m1_2, layer1)
 
-        m2_4 = self.pdc_4(layer4)
-        m2_3 = self.pdc_3(m1_3)
-        m2_2 = self.pdc_2(m1_2)
-        m2_1 = self.pdc_1(m1_1)
+        m2_4 = self.m2_4(layer4)
+        m2_3 = self.m2_3(m1_3)
+        m2_2 = self.m2_2(m1_2)
+        m2_1 = self.m2_1(m1_1)
 
         if self.training:
             aux1 = self.aux1(m2_1)
