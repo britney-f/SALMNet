@@ -1,6 +1,6 @@
 SALMNet: A structure-aware lane marking detection network
 ======
-by Xuemiao Xu, Tianfei Yu, Xiaowei Hu, Wing W. Y. Ng, and Pheng-Ann Heng<br>
+by Xuemiao Xu, Tianfei Yu, Xiaowei Hu, Wing W. Y. Ng, and Pheng-Ann Heng[paper link](https://ieeexplore.ieee.org/abstract/document/9061152)<br>
 This implementation is written by Tianfei Yu<br>
 
 Citation
@@ -13,4 +13,25 @@ Citation
   publisher={IEEE}<br>
 }<br>
 
+Requirement
+-----
+Python 2.7<br>
+Pytorch 0.4.1<br>
+torchvision<br>
+numpy<br>
+
+Training
+-----
+Set the path of pretrained ResNet model in config<br>
+Set the path of datasets in datasets<br>
+Run by `python train.py`<br>
+
+Testing
+-----
+Run by `python eval.py`<br>
+
+Relevant Links
+-----
+[Deformable convolution implementation](https://github.com/1zb/deformable-convolution-pytorch)
+[Synchronized-BatchNorm-PyTorch](https://github.com/vacancy/Synchronized-BatchNorm-PyTorch)
 
